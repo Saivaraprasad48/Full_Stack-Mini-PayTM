@@ -1,12 +1,84 @@
+/* eslint-disable no-unused-vars */
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export const SendMoney = () => {
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
   const name = searchParams.get("name");
   const [amount, setAmount] = useState(0);
+  const navigate = useNavigate();
+  const [balance, setBalance] = useState(null);
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/v1/account/specific/balance?userId=${id}`,
+          {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          }
+        );
+        setBalance(response.data.balance); // Update balance state with the fetched balance
+        // Clear any previous error messages
+      } catch (error) {
+        // Set error message if request fails
+      }
+    };
+
+    // Fetch balance only if userId is not empty
+    if (id) {
+      fetchBalance();
+    }
+  }, [id, balance]);
+
+  const initiateTransfer = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/v1/account/transfer",
+        {
+          to: id,
+          amount,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        }
+      );
+
+      setBalance(response.data.balance);
+      toast.success("Money successfully sent!", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } catch (e) {
+      toast.error("Money not sent!", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
 
   return (
     <div className="flex justify-center h-screen bg-gray-100">
@@ -22,10 +94,16 @@ export const SendMoney = () => {
                   {name[0].toUpperCase()}
                 </span>
               </div>
-              <h3 className="text-2xl font-semibold">{name}</h3>
+              <div>
+                <h3 className="text-2xl font-semibold">{name}</h3>
+                <p>
+                  {" "}
+                  Balance: {balance ? balance?.toFixed(2) : "Updating..."}{" "}
+                </p>
+              </div>
             </div>
             <div className="space-y-4">
-              <div className="space-y-2">
+              <div className="space-y-2 mt-2">
                 <label
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   htmlFor="amount"
@@ -43,24 +121,16 @@ export const SendMoney = () => {
                 />
               </div>
               <button
-                onClick={() => {
-                  axios.post(
-                    "http://localhost:3000/api/v1/account/transfer",
-                    {
-                      to: id,
-                      amount,
-                    },
-                    {
-                      headers: {
-                        Authorization:
-                          "Bearer " + localStorage.getItem("token"),
-                      },
-                    }
-                  );
-                }}
+                onClick={initiateTransfer}
                 className="justify-center rounded-md text-sm font-medium ring-offset-background transition-colors h-10 px-4 py-2 w-full bg-green-500 text-white"
               >
                 Initiate Transfer
+              </button>
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="justify-center rounded-md text-sm font-medium ring-offset-background transition-colors h-10 px-4 py-2 w-full bg-black text-white"
+              >
+                Go Back
               </button>
             </div>
           </div>

@@ -15,6 +15,26 @@ router.get("/balance", authMiddleware, async (req, res) => {
   });
 });
 
+router.get("/specific/balance", authMiddleware, async (req, res) => {
+  try {
+    const { userId } = req.query;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid userId" });
+    }
+    // Find the account using the userId
+    const account = await Account.findOne({ userId });
+    if (!account) {
+      return res.status(404).json({ message: "Account not found" });
+    }
+
+    res.json({ balance: account.balance });
+  } catch (error) {
+    console.error("Error fetching user balance:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 router.post("/transfer", authMiddleware, async (req, res) => {
   const session = await mongoose.startSession();
 

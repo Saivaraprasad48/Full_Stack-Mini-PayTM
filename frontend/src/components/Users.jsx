@@ -11,17 +11,28 @@ export const Users = () => {
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    const delayDebounce = setTimeout(() => {
-      axios
-        .get("http://localhost:3000/api/v1/user/bulk?filter=" + filter)
-        .then((response) => {
-          setUsers(response.data.user);
-        });
-    }, 1000);
+    const delayDebounce = setTimeout(async () => {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "X-UserId": localStorage.getItem("userId"), // Include the userId in a custom header
+        },
+      };
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/v1/user/bulk?filter=${filter}`,
+          config
+        );
+        setUsers(response.data.users);
+      } catch (error) {
+        // Handle errors here
+        console.error("Error fetching users:", error);
+      }
+    }, 500);
 
     return () => clearTimeout(delayDebounce);
   }, [filter]);
-
+  console.log(users);
   return (
     <>
       <div className="font-bold mt-6 text-lg">Users</div>
@@ -35,11 +46,7 @@ export const Users = () => {
           className="w-full px-2 py-1 border rounded border-slate-200"
         ></input>
       </div>
-      <div>
-        {users.map((user) => (
-          <User user={user} />
-        ))}
-      </div>
+      <div>{users && users?.map((user) => <User user={user} />)}</div>
     </>
   );
 };
@@ -49,16 +56,19 @@ function User({ user }) {
 
   return (
     <div className="flex justify-between">
-      <div className="flex">
-        <div className="rounded-full h-12 w-12 bg-slate-200 flex justify-center mt-1 mr-2">
+      <div className="flex items-center">
+        <div className="rounded-full h-12 w-12 bg-slate-200 flex justify-center items-center mt-4 mr-2">
           <div className="flex flex-col justify-center h-full text-xl">
             {user.firstName[0]}
           </div>
         </div>
         <div className="flex flex-col justify-center h-ful">
-          <div>
+          <h1 className="font-bold">
             {user.firstName} {user.lastName}
-          </div>
+          </h1>
+          <p>
+            Bal: <b>{user.balance.toFixed(2)}</b>
+          </p>
         </div>
       </div>
 
