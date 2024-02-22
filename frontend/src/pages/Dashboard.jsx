@@ -6,29 +6,26 @@ import axios from "axios";
 
 export const Dashboard = () => {
   const [balance, setBalance] = useState(0);
-
   const user = localStorage.getItem("user");
+  const fetchBalance = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
 
+      const response = await axios.get(
+        "http://localhost:5000/api/v1/account/balance",
+        config
+      );
+      setBalance(response.data.balance);
+    } catch (error) {
+      console.error("Error fetching account balance:", error);
+    }
+  };
   useEffect(() => {
-    const fetchBalance = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
-
-        const response = await axios.get(
-          "http://localhost:5000/api/v1/account/balance",
-          config
-        );
-        setBalance(response.data.balance);
-      } catch (error) {
-        console.error("Error fetching account balance:", error);
-      }
-    };
-
     fetchBalance();
   }, []);
 
