@@ -10,16 +10,17 @@ const bcrypt = require("bcrypt");
 
 const signupBody = zod.object({
   username: zod.string().email(),
-  firstName: zod.string(),
-  lastName: zod.string(),
-  password: zod.string(),
+  firstName: zod.string().min(3),
+  lastName: zod.string().min(3),
+  password: zod.string().min(6),
 });
 
 router.post("/signup", async (req, res) => {
   const { success } = signupBody.safeParse(req.body);
   if (!success) {
     return res.status(411).json({
-      message: "Email already taken/Incorrect inputs",
+      message:
+        "Incorrect inputs! FirstName & LastName should be 3 & password should be length of 6.",
     });
   }
 
@@ -29,7 +30,7 @@ router.post("/signup", async (req, res) => {
 
   if (existingUser) {
     return res.status(411).json({
-      message: "Email already taken/Incorrect inputs",
+      message: "User with email exists",
     });
   }
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -63,14 +64,15 @@ router.post("/signup", async (req, res) => {
 
 const signinBody = zod.object({
   username: zod.string().email(),
-  password: zod.string(),
+  password: zod.string().min(6),
 });
 
 router.post("/signin", async (req, res) => {
   const { success } = signinBody.safeParse(req.body);
   if (!success) {
     return res.status(411).json({
-      message: "Email already taken / Incorrect inputs",
+      message:
+        "Incorrect inputs! Type should be Email & Password must be length of 6.",
     });
   }
 
@@ -100,7 +102,7 @@ router.post("/signin", async (req, res) => {
   }
 
   res.status(411).json({
-    message: "Error while logging in",
+    message: "Invalid Email or Password!",
   });
 });
 
@@ -127,6 +129,53 @@ router.put("/", authMiddleware, async (req, res) => {
   });
 });
 
+router.get("/user-details", authMiddleware, async (req, res) => {
+  try {
+    // Find the user details of the current user
+    const currentUser = await User.findById(req.userId);
+    if (!currentUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Find the account details of the current user
+    const account = await Account.findOne({ userId: currentUser._id });
+
+    // Include necessary information in the response
+    const userDetails = {
+      username: currentUser.username,
+      firstName: currentUser.firstName,
+      lastName: currentUser.lastName,
+      _id: currentUser._id,
+      balance: account ? account.balance : 0, // Include balance if account exists, otherwise default to 0
+    };
+
+    // Send the user details in the response
+    res.status(200).json(userDetails);
+  } catch (error) {
+    // Handle any errors
+    console.error("Error retrieving user details:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+router.delete("/delete", authMiddleware, async (req, res) => {
+  try {
+    // Extract userId from request
+    const userId = req.userId;
+
+    // Delete the user and their associated account
+    await User.findByIdAndDelete(userId);
+    await Account.findOneAndDelete({ userId });
+
+    // Respond with success message
+    res.json({ message: "User account deleted successfully" });
+  } catch (error) {
+    // Handle errors
+    console.error("Error deleting user account:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 router.get("/bulk", async (req, res) => {
   const getToken = () => {
     if (req.headers && req.headers.authorization) {
@@ -142,7 +191,6 @@ router.get("/bulk", async (req, res) => {
     const userId = decoded.userId; // Extract the userId from the decoded token
     // Find all users excluding the logged-in user
     const users = await User.find({
-      _id: { $ne: userId }, // Exclude the logged-in user
       $or: [
         { firstName: { $regex: filter, $options: "i" } }, // Case-insensitive regex for firstName
         { lastName: { $regex: filter, $options: "i" } }, // Case-insensitive regex for lastName
