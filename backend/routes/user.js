@@ -57,6 +57,7 @@ router.post("/signup", async (req, res) => {
   res.json({
     message: "User created successfully",
     token: token,
+    user: user,
   });
 });
 
@@ -93,6 +94,7 @@ router.post("/signin", async (req, res) => {
 
       return res.json({
         token: token,
+        user: user,
       });
     }
   }
@@ -126,31 +128,48 @@ router.put("/", authMiddleware, async (req, res) => {
 });
 
 router.get("/bulk", async (req, res) => {
-  const filter = req.query.filter || "";
+  const getToken = () => {
+    if (req.headers && req.headers.authorization) {
+      const token = req.headers.authorization.split(" ")[1];
+      return token;
+    }
+  };
 
-  const users = await User.find({
-    $or: [
-      {
-        firstName: {
-          $regex: filter,
-        },
-      },
-      {
-        lastName: {
-          $regex: filter,
-        },
-      },
-    ],
-  });
+  try {
+    const filter = req.query.filter || "";
+    const token = getToken(); // Extract the JWT token from the Authorization header
+    const decoded = jwt.verify(token, JWT_SECRET); // Decode the JWT token
+    const userId = decoded.userId; // Extract the userId from the decoded token
+    // Find all users excluding the logged-in user
+    const users = await User.find({
+      _id: { $ne: userId }, // Exclude the logged-in user
+      $or: [
+        { firstName: { $regex: filter, $options: "i" } }, // Case-insensitive regex for firstName
+        { lastName: { $regex: filter, $options: "i" } }, // Case-insensitive regex for lastName
+      ],
+    });
 
-  res.json({
-    user: users.map((user) => ({
-      username: user.username,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      _id: user._id,
-    })),
-  });
+    // Map the users to include only necessary information
+    const usersWithBalance = await Promise.all(
+      users.map(async (user) => {
+        const account = await Account.findOne({ userId: user._id });
+        return {
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          _id: user._id,
+          balance: account ? account.balance : 0, // Include balance if account exists, otherwise default to 0
+        };
+      })
+    );
+
+    // Return the filtered users
+    res.json({ users: usersWithBalance });
+  } catch (error) {
+    // Handle any errors
+    console.error("Error while fetching users:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 module.exports = router;
