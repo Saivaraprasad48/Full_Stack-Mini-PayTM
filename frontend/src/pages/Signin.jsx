@@ -6,6 +6,7 @@ import { InputBox } from "../components/InputBox";
 import { SubHeading } from "../components/SubHeading";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Image from "../assets/paytm.png";
 import { toast } from "react-toastify";
 
 export const Signin = () => {
@@ -16,8 +17,12 @@ export const Signin = () => {
   return (
     <div className="bg-slate-300 h-screen flex justify-center">
       <div className="flex flex-col justify-center">
-        <div className="rounded-lg bg-white w-80 text-center p-2 h-max px-4">
-          <Heading label={"Sign in"} />
+        <div className="rounded-lg bg-white w-90 text-center p-3 h-max px-4">
+          <div className="flex flex-row justify-center items-center">
+            <img className="w-[80px]" src={Image} alt="logo" />
+            <h1 className="text-4xl font-bold"> Mini PayTM </h1>
+          </div>
+          <Heading label={"Login here! "} />
           <SubHeading label={"Enter your credentials to access your account"} />
           <InputBox
             onChange={(e) => setUsername(e.target.value)}
@@ -56,27 +61,30 @@ export const Signin = () => {
                   });
                 } catch (error) {
                   console.error("Error signing in:", error);
-                  toast.error("Failed to sign in. Please try again.", {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "light",
-                  });
+                  toast.error(
+                    `Failed to sign in. ${error.response.data.message}`,
+                    {
+                      position: "top-left",
+                      autoClose: 3000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      theme: "light",
+                    }
+                  );
                 }
               }}
               label={"Sign in"}
             />
           </div>
+          <BottomWarning
+            label={"Don't have an account?"}
+            buttonText={"Sign up"}
+            to={"/signup"}
+          />
         </div>
-        <BottomWarning
-          label={"Don't have an account?"}
-          buttonText={"Sign up"}
-          to={"/signup"}
-        />
       </div>
     </div>
   );

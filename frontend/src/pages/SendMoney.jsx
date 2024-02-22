@@ -4,6 +4,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { Appbar } from "../components/Appbar";
 
 export const SendMoney = () => {
   const [searchParams] = useSearchParams();
@@ -12,6 +13,7 @@ export const SendMoney = () => {
   const [amount, setAmount] = useState(0);
   const navigate = useNavigate();
   const [balance, setBalance] = useState(null);
+  const user = localStorage.getItem("user");
 
   useEffect(() => {
     const fetchBalance = async () => {
@@ -63,79 +65,85 @@ export const SendMoney = () => {
         progress: undefined,
         theme: "light",
       });
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      setAmount("");
     } catch (e) {
-      toast.error("Money not sent!", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      toast.error(
+        "There might be issue! Please go back & try again after while!",
+        {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        }
+      );
     }
   };
 
   return (
-    <div className="flex justify-center h-screen bg-gray-100">
-      <div className="h-full flex flex-col justify-center">
-        <div className="border h-min text-card-foreground max-w-md p-4 space-y-8 w-96 bg-white shadow-lg rounded-lg">
-          <div className="flex flex-col space-y-1.5 p-6">
-            <h2 className="text-3xl font-bold text-center">Send Money</h2>
-          </div>
-          <div className="p-6">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
-                <span className="text-2xl text-white">
-                  {name[0].toUpperCase()}
-                </span>
-              </div>
-              <div>
-                <h3 className="text-2xl font-semibold">{name}</h3>
-                <p>
-                  {" "}
-                  Balance: {balance ? balance?.toFixed(2) : "Updating..."}{" "}
-                </p>
-              </div>
+    <>
+      <Appbar user={user} />
+      <div className="flex justify-center h-screen bg-gray-100">
+        <div className="h-full flex flex-col justify-center">
+          <div className="border h-min text-card-foreground max-w-md p-4 space-y-8 w-96 bg-white shadow-lg rounded-lg">
+            <div className="flex flex-col space-y-1.5 p-6">
+              <h2 className="text-3xl font-bold text-center">Send Money</h2>
             </div>
-            <div className="space-y-4">
-              <div className="space-y-2 mt-2">
-                <label
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  htmlFor="amount"
-                >
-                  Amount (in Rs)
-                </label>
-                <input
-                  onChange={(e) => {
-                    setAmount(e.target.value);
-                  }}
-                  type="number"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                  id="amount"
-                  placeholder="Enter amount"
-                />
+            <div className="p-6">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
+                  <span className="text-2xl text-white">
+                    {name[0].toUpperCase()}
+                  </span>
+                </div>
+                <div>
+                  <h3 className="text-2xl font-semibold">{name}</h3>
+                  <p>
+                    {" "}
+                    Balance: {balance
+                      ? balance?.toFixed(2)
+                      : "Updating..."}{" "}
+                  </p>
+                </div>
               </div>
-              <button
-                onClick={initiateTransfer}
-                className="justify-center rounded-md text-sm font-medium ring-offset-background transition-colors h-10 px-4 py-2 w-full bg-green-500 text-white"
-              >
-                Initiate Transfer
-              </button>
-              <button
-                onClick={() => navigate("/dashboard")}
-                className="justify-center rounded-md text-sm font-medium ring-offset-background transition-colors h-10 px-4 py-2 w-full bg-black text-white"
-              >
-                Go Back
-              </button>
+              <div className="space-y-4">
+                <div className="space-y-2 mt-2">
+                  <label
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    htmlFor="amount"
+                  >
+                    Amount (in Rs)
+                  </label>
+                  <input
+                    onChange={(e) => {
+                      setAmount(e.target.value);
+                    }}
+                    type="number"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    id="amount"
+                    placeholder="Enter amount"
+                  />
+                </div>
+                <button
+                  onClick={initiateTransfer}
+                  className="justify-center rounded-md text-sm font-medium ring-offset-background transition-colors h-10 px-4 py-2 w-full bg-green-500 text-white"
+                >
+                  Initiate Transfer
+                </button>
+                <button
+                  onClick={() => navigate("/dashboard")}
+                  className="justify-center rounded-md text-sm font-medium ring-offset-background transition-colors h-10 px-4 py-2 w-full bg-black text-white"
+                >
+                  Go Back
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
