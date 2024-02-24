@@ -32,6 +32,7 @@ export const Users = () => {
 
     return () => clearTimeout(delayDebounce);
   }, [filter]);
+
   return (
     <>
       <div className="font-bold mt-6 text-lg">All Available Users</div>
@@ -59,11 +60,11 @@ function User({ user }) {
   const navigate = useNavigate();
 
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between mt-3">
       <div className="flex items-center">
-        <div className="rounded-full h-12 w-12 bg-slate-200 flex justify-center items-center mt-4 mr-2">
+        <div className="rounded-full h-12 w-12 bg-slate-200 flex justify-center items-center mr-2">
           <div className="flex flex-col justify-center h-full text-xl">
-            {user.firstName[0]}
+            {user?.firstName[0]?.toUpperCase()}
           </div>
         </div>
         <div className="flex flex-col justify-center h-ful">

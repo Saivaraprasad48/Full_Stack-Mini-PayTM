@@ -45,7 +45,7 @@ export const Signup = () => {
             onChange={(e) => {
               setUsername(e.target.value);
             }}
-            placeholder="harkirat@gmail.com"
+            placeholder="sample@gmail.com"
             label={"Email"}
           />
           <InputBox
@@ -85,7 +85,7 @@ export const Signup = () => {
                     `Failed to sign up. ${error.response.data.message} `,
                     {
                       position: "top-left",
-                      autoClose: 3000,
+                      autoClose: 5000,
                       hideProgressBar: false,
                       closeOnClick: true,
                       pauseOnHover: true,

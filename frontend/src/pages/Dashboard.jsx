@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { Appbar } from "../components/Appbar";
 import { Balance } from "../components/Balance";
@@ -25,6 +26,7 @@ export const Dashboard = () => {
       console.error("Error fetching account balance:", error);
     }
   };
+
   useEffect(() => {
     fetchBalance();
   }, []);

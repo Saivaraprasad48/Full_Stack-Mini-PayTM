@@ -112,20 +112,28 @@ const updateBody = zod.object({
   lastName: zod.string().optional(),
 });
 
-router.put("/", authMiddleware, async (req, res) => {
-  const { success } = updateBody.safeParse(req.body);
+router.put("/update-user", authMiddleware, async (req, res) => {
+  const { success, data } = updateBody.safeParse(req.body);
   if (!success) {
     res.status(411).json({
       message: "Error while updating information",
     });
   }
 
-  await User.updateOne(req.body, {
-    id: req.userId,
-  });
+  if (data.password) {
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    data.password = hashedPassword;
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(
+    req.userId,
+    { $set: data },
+    { new: true }
+  );
 
   res.json({
     message: "Updated successfully",
+    user: updatedUser,
   });
 });
 
