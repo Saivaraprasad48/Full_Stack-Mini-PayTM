@@ -1,13 +1,13 @@
-### A Mini-PayTM Application 
+# A Mini-PayTM Application 
 
-##This application allows you 
+### This application allows you 
 - To register and login with the email account.
 - Users can see their balance and existing users then and there.
 - Users can transfer money to existing users & can search for users from the search bar.
 - Users can see their profile and update their user information.
 - Users can delete the account.
 
-# This is a complete `full-stack application` built with `MERN stack` and `Zod` for input validation, `JWT` for authentication, and some more things on the top of the stack.
+### This is a complete `full-stack application` built with `MERN stack` and `Zod` for input validation, `JWT` for authentication, and some more things on the top of the stack.
 
 
 ## 1. Users can register and login with the email account.
