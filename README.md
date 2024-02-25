@@ -65,7 +65,7 @@
 ## Clone the repository:
 
 ```bash
- git clone https://github.com/Saivaraprasad48/Paytm_Clone.git
+ git clone https://github.com/Saivaraprasad48/Full_Stack-Mini-PayTM.git
 ```
 
 ### Manual Installation
