@@ -50,6 +50,7 @@ export const Users = () => {
         {users &&
           users
             .filter((each) => localStorage.getItem("userId") !== each._id)
+            .sort((a, b) => a.firstName.localeCompare(b.firstName))
             .map((user) => <User key={user._id} user={user} />)}
       </div>
     </>
