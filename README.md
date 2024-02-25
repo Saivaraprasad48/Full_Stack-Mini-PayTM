@@ -62,16 +62,57 @@
 
 ## Setup to this local 
 
-> Clone the repo
+## Clone the repository:
 
-### cd backend
-### setup env (DB URL)
-### npm install 
-### npm start
+```bash
+ git clone https://github.com/Saivaraprasad48/Paytm_Clone.git
+```
 
-### cd frontend 
-### npm install
-### setup env (FOR API's)
-### npm run dev
+### Manual Installation
 
-Then, here we go, Have a blast transfers 🔥
+#### Backend
+
+1. Navigate to the `backend` directory:
+
+   ```bash
+   cd backend
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+3. Run the backend app:
+
+   ```bash
+   npm start
+   ```
+
+#### Frontend
+
+1. Navigate to the frontend directory:
+
+   ```bash
+   cd frontend
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the React app:
+
+   ```bash
+   npm run dev
+   ```
+
+4. Access the application:
+
+   - `frontend`: http://localhost:3000
+   - `backend`: http://localhost:5000
+
+
+Then, here we go, Have a blasting transfers 🔥
+
+# Thank you :)
