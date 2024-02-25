@@ -64,14 +64,14 @@
 
 > Clone the repo
 
-# cd backend
-# setup env (DB URL)
-# npm install 
-# npm start
+### cd backend
+### setup env (DB URL)
+### npm install 
+### npm start
 
-# cd frontend 
-# npm install
-# setup env (FOR API's)
-# npm run dev
+### cd frontend 
+### npm install
+### setup env (FOR API's)
+### npm run dev
 
 Then, here we go, Have a blast transfers 🔥
