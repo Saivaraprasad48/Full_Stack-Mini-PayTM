@@ -9,6 +9,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Image from "../assets/paytm.png";
 import { toast } from "react-toastify";
+import { endpoints } from "../configs/urls";
 
 export const Signup = () => {
   const [firstName, setFirstName] = useState("");
@@ -59,15 +60,12 @@ export const Signup = () => {
             <Button
               onClick={async () => {
                 try {
-                  const response = await axios.post(
-                    "http://localhost:5000/api/v1/user/signup",
-                    {
-                      username,
-                      firstName,
-                      lastName,
-                      password,
-                    }
-                  );
+                  const response = await axios.post(endpoints.signup, {
+                    username,
+                    firstName,
+                    lastName,
+                    password,
+                  });
                   navigate("/signin");
                   toast.success("Registration Successful, Please Login!", {
                     position: "top-right",

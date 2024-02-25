@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { InputBox } from "../components/InputBox";
+import { endpoints } from "../configs/urls";
 
 const UserProfile = () => {
   const value = 0;
@@ -50,15 +51,11 @@ const UserProfile = () => {
       }
 
       const token = localStorage.getItem("token");
-      const response = await axios.put(
-        "http://localhost:5000/api/v1/user/update-user",
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.put(endpoints.updateuser, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setUpdateModal((p) => !p);
       localStorage.setItem("user", data.firstName);
       toast.success("New Details Updated!", {
@@ -90,14 +87,11 @@ const UserProfile = () => {
   const deleteCurrentAccount = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.delete(
-        "http://localhost:5000/api/v1/user/delete",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.delete(endpoints.deleteuser, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       navigate("/signup");
       toast.warning("You're account deleted!", {
         position: "top-center",
@@ -205,15 +199,12 @@ const UserProfile = () => {
 
   const fetchCurrentUser = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/v1/user/user-details",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.get(endpoints.getusers, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
       SetCurrentUser(response.data);
     } catch (error) {
       console.error("Error fetching current user:", error);

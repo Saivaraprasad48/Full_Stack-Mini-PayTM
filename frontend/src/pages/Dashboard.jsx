@@ -4,10 +4,12 @@ import { Appbar } from "../components/Appbar";
 import { Balance } from "../components/Balance";
 import { Users } from "../components/Users";
 import axios from "axios";
+import { endpoints } from "../configs/urls";
 
 export const Dashboard = () => {
   const [balance, setBalance] = useState(0);
   const user = localStorage.getItem("user");
+  console.log(endpoints);
   const fetchBalance = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -17,10 +19,7 @@ export const Dashboard = () => {
         },
       };
 
-      const response = await axios.get(
-        "http://localhost:5000/api/v1/account/balance",
-        config
-      );
+      const response = await axios.get(endpoints.currentuserbalance, config);
       setBalance(response.data.balance);
     } catch (error) {
       console.error("Error fetching account balance:", error);

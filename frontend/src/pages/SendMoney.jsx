@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { Appbar } from "../components/Appbar";
+import { endpoints } from "../configs/urls";
 
 export const SendMoney = () => {
   const [searchParams] = useSearchParams();
@@ -19,7 +20,7 @@ export const SendMoney = () => {
     const fetchBalance = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/v1/account/specific/balance?userId=${id}`,
+          `${endpoints.getbalance}?userId=${id}`,
           {
             headers: {
               Authorization: "Bearer " + localStorage.getItem("token"),
@@ -42,7 +43,7 @@ export const SendMoney = () => {
   const initiateTransfer = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/v1/account/transfer",
+        endpoints.transferbalance,
         {
           to: id,
           amount,
