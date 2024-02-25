@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 export const Appbar = ({ user }) => {
   const [dropDown, setDropDown] = useState(false);
   const navigate = useNavigate();
+
   return (
     <div className="shadow h-16 flex justify-between">
       <div
@@ -26,10 +27,10 @@ export const Appbar = ({ user }) => {
         onClick={() => setDropDown((p) => !p)}
       >
         <div className="flex flex-col justify-center h-full mr-4">
-          Hello {user}
+          👋 {user}
         </div>
         <div className="rounded-full h-12 w-12 bg-slate-200 flex justify-center mt-1 mr-2">
-          <div className="flex flex-col justify-center h-full text-xl ">
+          <div className="flex flex-col justify-center h-full text-xl font-bold">
             {user[0]}
           </div>
         </div>
@@ -46,6 +47,7 @@ export const Appbar = ({ user }) => {
               onClick={() => {
                 localStorage.removeItem("user");
                 localStorage.removeItem("token");
+                localStorage.removeItem("userId");
                 navigate("/signin");
                 toast.info("You're successufully Logged out!", {
                   position: "top-center",

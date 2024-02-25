@@ -5,12 +5,13 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { Appbar } from "../components/Appbar";
+import { endpoints } from "../configs/urls";
 
 export const SendMoney = () => {
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
   const name = searchParams.get("name");
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState("");
   const navigate = useNavigate();
   const [balance, setBalance] = useState(null);
   const user = localStorage.getItem("user");
@@ -19,7 +20,7 @@ export const SendMoney = () => {
     const fetchBalance = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/v1/account/specific/balance?userId=${id}`,
+          `${endpoints.getbalance}?userId=${id}`,
           {
             headers: {
               Authorization: "Bearer " + localStorage.getItem("token"),
@@ -42,7 +43,7 @@ export const SendMoney = () => {
   const initiateTransfer = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/v1/account/transfer",
+        endpoints.transferbalance,
         {
           to: id,
           amount,
@@ -53,8 +54,8 @@ export const SendMoney = () => {
           },
         }
       );
-
       setBalance(response.data.balance);
+      setAmount("");
       toast.success("Money successfully sent!", {
         position: "top-center",
         autoClose: 3000,
@@ -65,7 +66,6 @@ export const SendMoney = () => {
         progress: undefined,
         theme: "light",
       });
-      setAmount("");
     } catch (e) {
       toast.error(
         "There might be issue! Please go back & try again after while!",
@@ -83,6 +83,10 @@ export const SendMoney = () => {
     }
   };
 
+  const handleChange = (e) => {
+    setAmount(e.target.value);
+  };
+
   return (
     <>
       <Appbar user={user} />
@@ -96,7 +100,7 @@ export const SendMoney = () => {
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
                   <span className="text-2xl text-white">
-                    {name[0].toUpperCase()}
+                    {name[0]?.toUpperCase()}
                   </span>
                 </div>
                 <div>
@@ -118,10 +122,9 @@ export const SendMoney = () => {
                     Amount (in Rs)
                   </label>
                   <input
-                    onChange={(e) => {
-                      setAmount(e.target.value);
-                    }}
+                    onChange={handleChange}
                     type="number"
+                    value={amount}
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                     id="amount"
                     placeholder="Enter amount"

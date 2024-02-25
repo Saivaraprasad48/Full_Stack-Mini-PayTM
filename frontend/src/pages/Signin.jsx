@@ -8,12 +8,13 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Image from "../assets/paytm.png";
 import { toast } from "react-toastify";
+import { endpoints } from "../configs/urls";
 
 export const Signin = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-
+  console.log(endpoints);
   return (
     <div className="bg-slate-300 h-screen flex justify-center">
       <div className="flex flex-col justify-center">
@@ -38,13 +39,10 @@ export const Signin = () => {
             <Button
               onClick={async () => {
                 try {
-                  const response = await axios.post(
-                    "http://localhost:5000/api/v1/user/signin",
-                    {
-                      username,
-                      password,
-                    }
-                  );
+                  const response = await axios.post(endpoints.login, {
+                    username,
+                    password,
+                  });
                   localStorage.setItem("token", response.data.token);
                   localStorage.setItem("userId", response.data.user._id);
                   localStorage.setItem("user", response.data.user.firstName);
