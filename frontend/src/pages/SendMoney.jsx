@@ -27,14 +27,12 @@ export const SendMoney = () => {
             },
           }
         );
-        setBalance(response.data.balance); // Update balance state with the fetched balance
-        // Clear any previous error messages
+        setBalance(response.data.balance);
       } catch (error) {
         // Set error message if request fails
       }
     };
 
-    // Fetch balance only if userId is not empty
     if (id) {
       fetchBalance();
     }

@@ -22,7 +22,7 @@ router.get("/specific/balance", authMiddleware, async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: "Invalid userId" });
     }
-    // Find the account using the userId
+
     const account = await Account.findOne({ userId });
     if (!account) {
       return res.status(404).json({ message: "Account not found" });

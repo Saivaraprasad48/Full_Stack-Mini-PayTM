@@ -15,7 +15,7 @@ export const Users = () => {
       const config = {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "X-UserId": localStorage.getItem("userId"), // Include the userId in a custom header
+          "X-UserId": localStorage.getItem("userId"),
         },
       };
       try {

@@ -139,28 +139,21 @@ router.put("/update-user", authMiddleware, async (req, res) => {
 
 router.get("/user-details", authMiddleware, async (req, res) => {
   try {
-    // Find the user details of the current user
     const currentUser = await User.findById(req.userId);
     if (!currentUser) {
       return res.status(404).json({ message: "User not found" });
     }
-
-    // Find the account details of the current user
     const account = await Account.findOne({ userId: currentUser._id });
-
-    // Include necessary information in the response
     const userDetails = {
       username: currentUser.username,
       firstName: currentUser.firstName,
       lastName: currentUser.lastName,
       _id: currentUser._id,
-      balance: account ? account.balance : 0, // Include balance if account exists, otherwise default to 0
+      balance: account ? account.balance : 0,
     };
 
-    // Send the user details in the response
     res.status(200).json(userDetails);
   } catch (error) {
-    // Handle any errors
     console.error("Error retrieving user details:", error);
     res.status(500).json({ message: "Internal server error" });
   }
@@ -168,17 +161,13 @@ router.get("/user-details", authMiddleware, async (req, res) => {
 
 router.delete("/delete", authMiddleware, async (req, res) => {
   try {
-    // Extract userId from request
     const userId = req.userId;
 
-    // Delete the user and their associated account
     await User.findByIdAndDelete(userId);
     await Account.findOneAndDelete({ userId });
 
-    // Respond with success message
     res.json({ message: "User account deleted successfully" });
   } catch (error) {
-    // Handle errors
     console.error("Error deleting user account:", error);
     res.status(500).json({ message: "Internal server error" });
   }
@@ -194,18 +183,17 @@ router.get("/bulk", async (req, res) => {
 
   try {
     const filter = req.query.filter || "";
-    const token = getToken(); // Extract the JWT token from the Authorization header
-    const decoded = jwt.verify(token, JWT_SECRET); // Decode the JWT token
-    const userId = decoded.userId; // Extract the userId from the decoded token
-    // Find all users excluding the logged-in user
+    const token = getToken();
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const userId = decoded.userId;
+
     const users = await User.find({
       $or: [
-        { firstName: { $regex: filter, $options: "i" } }, // Case-insensitive regex for firstName
-        { lastName: { $regex: filter, $options: "i" } }, // Case-insensitive regex for lastName
+        { firstName: { $regex: filter, $options: "i" } },
+        { lastName: { $regex: filter, $options: "i" } },
       ],
     });
 
-    // Map the users to include only necessary information
     const usersWithBalance = await Promise.all(
       users.map(async (user) => {
         const account = await Account.findOne({ userId: user._id });
@@ -214,15 +202,13 @@ router.get("/bulk", async (req, res) => {
           firstName: user.firstName,
           lastName: user.lastName,
           _id: user._id,
-          balance: account ? account.balance : 0, // Include balance if account exists, otherwise default to 0
+          balance: account ? account.balance : 0,
         };
       })
     );
 
-    // Return the filtered users
     res.json({ users: usersWithBalance });
   } catch (error) {
-    // Handle any errors
     console.error("Error while fetching users:", error);
     res.status(500).json({ message: "Internal server error" });
   }
