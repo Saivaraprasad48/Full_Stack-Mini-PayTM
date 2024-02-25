@@ -57,6 +57,7 @@
 
 ## Frontend
 - ReactJS
+- Tailwind
 - Axios
 - Toastify
 
