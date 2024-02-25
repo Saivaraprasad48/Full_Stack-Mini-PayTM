@@ -77,13 +77,20 @@
    ```bash
    cd backend
    ```
+   
+2. Setup env (DB URL):
 
-2. Install dependencies:
+   ```bash
+   .env
+   ```
+   
+3. Install dependencies:
 
    ```bash
    npm install
    ```
-3. Run the backend app:
+   
+4. Run the backend app:
 
    ```bash
    npm start
@@ -97,11 +104,18 @@
    cd frontend
    ```
 
-2. Install dependencies:
+2. Setup env (HOST with API's):
+
+   ```bash
+   config/urls.js
+   ```
+
+3. Install dependencies:
    ```bash
    npm install
    ```
-3. Run the React app:
+   
+4. Run the React app:
 
    ```bash
    npm run dev
